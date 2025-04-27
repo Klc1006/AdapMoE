@@ -38,7 +38,7 @@ class MixtralLinearWrapper(nn.Module):
         device: torch.device,
     ):
         state_dict = {
-            "W_q": layer.W_q,
+            "weight": layer.W_q,
             "meta": layer.meta,
             "bias": layer.bias,
         }
@@ -70,7 +70,8 @@ class MixtralLinearWrapper(nn.Module):
 
         state_dict = nested_pack(new_flattened_states, state_dict)
 
-        layer.W_q = state_dict["W_q"]
+        # layer.W_q = state_dict["W_q"]
+        layer.W_q = state_dict["weight"]
         layer.meta = state_dict["meta"]
         layer.bias = state_dict["bias"]
 

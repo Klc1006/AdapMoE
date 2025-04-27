@@ -1,6 +1,6 @@
 import os
 import json
-from functools import cache
+from functools import lru_cache as cache 
 from dataclasses import dataclass
 import typing as tp
 
@@ -11,6 +11,7 @@ from transformers import AutoConfig
 from transformers.models.mixtral import MixtralForCausalLM, MixtralConfig
 
 from safetensors.torch import load_file
+from safetensors import safe_open
 
 from torch import nn
 from tqdm.auto import trange
@@ -147,8 +148,12 @@ def make_and_load_expert_wrapper(
 
     index_path = os.path.join(states_dir, "model.safetensors.index.json")
     with open(index_path) as f:
-        module_idx = f"model.layers.{layer_idx}.block_sparse_moe.experts.{expert_idx}"
-        state_fpath = json.load(f)["weight_map"][f"{module_idx}.w1.W_q"]
+        # quant
+        # module_idx = f"model.layers.{layer_idx}.block_sparse_moe.experts.{expert_idx}"
+        # state_fpath = json.load(f)["weight_map"][f"{module_idx}.w1.W_q"]
+        #noe-quant
+        module_idx = f"model.layers.{layer_idx}.block_sparse_moe.experts.{expert_idx}.w1.weight"
+        state_fpath = json.load(f)["weight_map"][module_idx]
 
     state_dict = load_file(os.path.join(states_dir, state_fpath), device=str(device))
     expert = make_empty_expert(config, quant_config)
@@ -158,11 +163,23 @@ def make_and_load_expert_wrapper(
 
 
 def load_00_expert_state_dict(states_dir: str, device: torch.device):
+    # non-quant_config
     index_path = os.path.join(states_dir, "model.safetensors.index.json")
     with open(index_path) as f:
-        module_idx = f"model.layers.0.block_sparse_moe.experts.0"
-        state_fpath = json.load(f)["weight_map"][f"{module_idx}.w1.W_q"]
-    return load_file(os.path.join(states_dir, state_fpath), device=str(device))
+        module_idx = f"model.layers.0.block_sparse_moe.experts.0.w1.weight"
+        state_fpath = json.load(f)["weight_map"][module_idx]
+        with safe_open(os.path.join(states_dir, state_fpath), framework="pt") as f:
+            state_dict = {}
+            for i in range(1, 4):
+                state_dict[f"w{i}.weight"] = f.get_tensor(f"model.layers.0.block_sparse_moe.experts.0.w{i}.weight")
+            return state_dict
+
+    # quant_config
+    # index_path = os.path.join(states_dir, "model.safetensors.index.json")
+    # with open(index_path) as f:
+    #     module_idx = f"model.layers.0.block_sparse_moe.experts.0"
+    #     state_fpath = json.load(f)["weight_map"][f"{module_idx}.w1.W_q"]
+    # return load_file(os.path.join(states_dir, state_fpath), device=str(device))
 
 
 def build_model(

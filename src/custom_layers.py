@@ -184,7 +184,7 @@ class HQQLinearTritonSavable(HQQLinear):
             _del(name)
             return v
         
-        _set('W_q')
+        _set('weight')
         if 'bias' in state_dict:
             _set('bias')
         else:

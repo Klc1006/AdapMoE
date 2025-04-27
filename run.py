@@ -17,7 +17,7 @@ import argparse
 import math
 
 def main():
-    path = "lavawolfiee/Mixtral-8x7B-Instruct-v0.1-offloading-demo"
+    path = "/clk/model/Mixtral-8x7B-v0.1"
     model_name = path
     quantized_model_name = path
     state_path = path
