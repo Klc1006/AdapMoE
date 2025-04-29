@@ -68,7 +68,7 @@ def main():
     quant_config = QuantConfig(ffn_config=ffn_config, attn_config=attn_config)
 
 
-    model = build_model(
+    model, expert_cache = build_model(
         device=device,
         quant_config=quant_config,
         offload_config=offload_config,
@@ -105,6 +105,40 @@ def main():
     # else:
     #     seq_len = input_ids.size(1) + past_key_values[0][0][0].size(1)
     #     attention_mask = torch.ones([1, seq_len - 1], dtype=torch.int, device=device)
+
+    def hook_fn(module, input, output):
+        layer_index = module.layer_id + i
+        topk = 2
+        if layer_index >= 31:
+            return
+        hidden_states = input[0]
+        hidden_states = hidden_states.to(torch.float16)
+        batch_size, sequence_length, hidden_dim = hidden_states.shape
+        num_tokens = batch_size * sequence_length
+        hidden_states = hidden_states.view(-1, hidden_dim)
+        # gate = model.model.layers[0].block_sparse_moe.gate
+        # print("hook_fn")
+        # next_layer = self.layers[layer_index].block_sparse_moe
+        next_gate = model.model.layers[layer_index].block_sparse_moe.gate
+        next_routing_logits = next_gate(hidden_states)
+        next_routing_weights = F.softmax(next_routing_logits, dim=1, dtype=torch.float)
+        next_routing_weights, next_selected_experts = torch.topk(next_routing_weights, topk, dim=-1)
+        next_routing_weights /= next_routing_weights.sum(dim=-1, keepdim=True)
+        next_routing_weights = next_routing_weights.to(hidden_states.dtype)
+        next_selected_experts = next_selected_experts[0].tolist()
+        # uid = self.experts.check(layer_index, next_selected_experts)
+        uid = expert_cache.check(layer_index, next_selected_experts)
+        expert_cache.prefetch(expert_cache.registered_experts[uid])
+        print(next_selected_experts)
+
+    # mistral model 
+    hooks = []
+    count = 0
+    for layer in assistant_model.model.layers:
+        hook = layer.mlp.register_forward_hook(hook_fn)
+        layer.mlp.layer_id = count
+        count+=1
+        hooks.append(hook)
 
     for i in range(1):
         streamer = TimerStreamer()
@@ -158,7 +192,7 @@ def main():
                 past_key_values=past_key_values,
                 output_hidden_states=True,
             )
-        prof.export_chrome_trace("/root/AdapMoE/trace/trace_{}_1r.json".format(i+1))
+        prof.export_chrome_trace("/root/AdapMoE/trace/trace_{}_draft_prefetch.json".format(i+1))
         end_time = time.time()
         time_sum += end_time - start_time
         num_tokens += result["sequences"].shape[1]
@@ -182,6 +216,8 @@ def main():
         print(sequence.shape)
         print("-------------------------------")
 
+    for hook in hooks:
+        hook.remove()
 
     # seq_len = 0
     # total_time = 0

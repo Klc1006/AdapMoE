@@ -241,4 +241,4 @@ def build_model(
             torch.cuda.synchronize(device)
             torch.cuda.empty_cache()
 
-    return model
+    return model, expert_cache
