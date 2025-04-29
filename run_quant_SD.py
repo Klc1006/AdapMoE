@@ -95,7 +95,7 @@ def main():
     tokenizer.pad_token = tokenizer.eos_token
     tokenizer.padding_side = "left"
 
-    output_token = 5
+    output_token = 20
     batch_size = 1
 
     idx_text = 0
@@ -106,34 +106,43 @@ def main():
     #     seq_len = input_ids.size(1) + past_key_values[0][0][0].size(1)
     #     attention_mask = torch.ones([1, seq_len - 1], dtype=torch.int, device=device)
 
-    for i in range(10):
+    for i in range(1):
         streamer = TimerStreamer()
         time_sum = 0
         num_tokens = 0
-        batch = []
-        for _ in range(batch_size):
-            text = texts[idx_text]["inputs"]
-            idx_text += 1
-            batch.append(text)
-        input_ids = tokenizer(
-            batch, 
-            return_tensors='pt', 
-            max_length=512, 
+        # batch = []
+        # for _ in range(batch_size):
+        #     text = texts[idx_text]["inputs"]
+        #     idx_text += 1
+        #     batch.append(text)
+        # input_ids = tokenizer(
+        #     batch, 
+        #     return_tensors='pt', 
+        #     max_length=512, 
+        #     truncation=True,
+        #     padding=True,
+        # )["input_ids"]
+        # input_ids = input_ids.to(device)
+        
+        inputs = tokenizer(
+            texts[i]["inputs"],
             truncation=True,
-            padding=True,
-        )["input_ids"]
-        input_ids = input_ids.to(device)
-
-        if past_key_values is None:
-            attention_mask = torch.ones_like(input_ids)
-        else:
-            seq_len = input_ids.size(1) + past_key_values[0][0][0].size(1)
-            attention_mask = torch.ones([1, seq_len - 1], dtype=torch.int, device=device)
+            padding="do_not_pad",
+            max_length=512,
+            return_tensors="pt",
+        )
+        # text = texts[idx_text]["inputs"]
+        # if past_key_values is None:
+        #     attention_mask = torch.ones_like(input_ids)
+        # else:
+        #     seq_len = input_ids.size(1) + past_key_values[0][0][0].size(1)
+        #     attention_mask = torch.ones([1, seq_len - 1], dtype=torch.int, device=device)
 
         start_time = time.time()
         activities = [ProfilerActivity.CPU, ProfilerActivity.CUDA, ProfilerActivity.XPU]
-        with profile(activities=activities) as prof:            result = model.generate(
-                input_ids=input_ids,
+        with profile(activities=activities) as prof:            
+            result = model.generate(
+                input_ids=inputs.input_ids.to("cuda:0"),
                 assistant_model=assistant_model,
                 max_new_tokens=output_token,
                 min_new_tokens=output_token,
@@ -144,11 +153,12 @@ def main():
                 pad_token_id=tokenizer.eos_token_id,
                 return_dict_in_generate=True,
                 # mixtral-offload-wenz 
-                attention_mask=attention_mask,
+                # attention_mask=attention_mask,
+                attention_mask=inputs.attention_mask.to("cuda:0"),
                 past_key_values=past_key_values,
                 output_hidden_states=True,
             )
-        # prof.export_chrome_trace("trace_{}.json".format(i+1))
+        prof.export_chrome_trace("/root/AdapMoE/trace/trace_{}_1r.json".format(i+1))
         end_time = time.time()
         time_sum += end_time - start_time
         num_tokens += result["sequences"].shape[1]
@@ -159,7 +169,7 @@ def main():
         # for i in range(result["sequences"].shape[0]):
         #     print(f'{i} output text: {tokenizer.decode(result["sequences"][i])}')
         print(f"Inputs {i+1}")
-        print(f"Batch Size: {input_ids.shape[0]}")
+        # print(f"Batch Size: {input_ids.shape[0]}")
         print(f"Prefilling time: {streamer.prefilling_time} seconds")
         print(f"Decoding time: {streamer.decoding_time} seconds")
         print(f"Decoding iterations: {streamer.decoding_iterations}")
@@ -167,8 +177,9 @@ def main():
             f"Decoding time per iteration: {streamer.decoding_time / streamer.decoding_iterations} seconds"
         )
         print(
-            f"Time per output token(TPOT): {streamer.decoding_time / streamer.decoding_iterations / input_ids.shape[0]} seconds"
+            f"Time per output token(TPOT): {streamer.decoding_time / output_token} seconds"
         )
+        print(sequence.shape)
         print("-------------------------------")
 
 
