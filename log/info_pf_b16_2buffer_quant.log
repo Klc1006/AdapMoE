@@ -1,0 +1,92 @@
+nohup: ignoring input
+/root/miniconda3/envs/mixtral-offload/lib/python3.10/site-packages/transformers/utils/generic.py:441: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  _torch_pytree._register_pytree_node(
+/root/miniconda3/envs/mixtral-offload/lib/python3.10/site-packages/transformers/utils/generic.py:309: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  _torch_pytree._register_pytree_node(
+/root/miniconda3/envs/mixtral-offload/lib/python3.10/site-packages/transformers/utils/generic.py:309: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  _torch_pytree._register_pytree_node(
+/root/miniconda3/envs/mixtral-offload/lib/python3.10/site-packages/torch/nn/init.py:511: UserWarning: Initializing zero-element tensors is a no-op
+  warnings.warn("Initializing zero-element tensors is a no-op")
+hqq_aten package not installed. HQQBackend.ATEN backend will not work unless you install the hqq_aten lib in hqq/kernels.
+[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+Loading experts:   0%|          | 0/32 [00:00<?, ?it/s]Loading experts:   3%|▎         | 1/32 [00:00<00:10,  2.91it/s]Loading experts:   6%|▋         | 2/32 [00:00<00:10,  2.92it/s]Loading experts:   9%|▉         | 3/32 [00:01<00:09,  2.93it/s]Loading experts:  12%|█▎        | 4/32 [00:01<00:09,  2.89it/s]Loading experts:  16%|█▌        | 5/32 [00:01<00:09,  2.92it/s]Loading experts:  19%|█▉        | 6/32 [00:02<00:08,  2.95it/s]Loading experts:  22%|██▏       | 7/32 [00:02<00:08,  2.95it/s]Loading experts:  25%|██▌       | 8/32 [00:02<00:08,  2.96it/s]Loading experts:  28%|██▊       | 9/32 [00:03<00:07,  2.91it/s]Loading experts:  31%|███▏      | 10/32 [00:03<00:07,  2.94it/s]Loading experts:  34%|███▍      | 11/32 [00:03<00:07,  2.96it/s]Loading experts:  38%|███▊      | 12/32 [00:04<00:06,  2.96it/s]Loading experts:  41%|████      | 13/32 [00:04<00:06,  2.95it/s]Loading experts:  44%|████▍     | 14/32 [00:04<00:06,  2.97it/s]Loading experts:  47%|████▋     | 15/32 [00:05<00:05,  2.95it/s]Loading experts:  50%|█████     | 16/32 [00:05<00:05,  2.96it/s]Loading experts:  53%|█████▎    | 17/32 [00:05<00:05,  2.99it/s]Loading experts:  56%|█████▋    | 18/32 [00:06<00:04,  3.00it/s]Loading experts:  59%|█████▉    | 19/32 [00:06<00:04,  3.00it/s]Loading experts:  62%|██████▎   | 20/32 [00:06<00:04,  2.99it/s]Loading experts:  66%|██████▌   | 21/32 [00:07<00:03,  3.00it/s]Loading experts:  69%|██████▉   | 22/32 [00:07<00:03,  3.01it/s]Loading experts:  72%|███████▏  | 23/32 [00:07<00:02,  3.01it/s]Loading experts:  75%|███████▌  | 24/32 [00:08<00:02,  3.01it/s]Loading experts:  78%|███████▊  | 25/32 [00:08<00:02,  2.98it/s]Loading experts:  81%|████████▏ | 26/32 [00:08<00:01,  3.00it/s]Loading experts:  84%|████████▍ | 27/32 [00:09<00:01,  3.01it/s]Loading experts:  88%|████████▊ | 28/32 [00:09<00:01,  3.03it/s]Loading experts:  91%|█████████ | 29/32 [00:09<00:00,  3.04it/s]Loading experts:  94%|█████████▍| 30/32 [00:10<00:00,  2.99it/s]Loading experts:  97%|█████████▋| 31/32 [00:10<00:00,  3.01it/s]Loading experts: 100%|██████████| 32/32 [00:10<00:00,  3.02it/s]Loading experts: 100%|██████████| 32/32 [00:10<00:00,  2.98it/s]
+Inputs 1
+Batch Size: 1
+Prefilling time: 3.463759422302246 seconds
+Decoding time: 9.75072193145752 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.487536096572876 seconds
+Time per output token(TPOT): 0.487536096572876 seconds
+-------------------------------
+Inputs 2
+Batch Size: 1
+Prefilling time: 2.0821759700775146 seconds
+Decoding time: 9.8275465965271 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.49137732982635496 seconds
+Time per output token(TPOT): 0.49137732982635496 seconds
+-------------------------------
+Inputs 3
+Batch Size: 1
+Prefilling time: 2.090041399002075 seconds
+Decoding time: 9.989503860473633 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.49947519302368165 seconds
+Time per output token(TPOT): 0.49947519302368165 seconds
+-------------------------------
+Inputs 4
+Batch Size: 1
+Prefilling time: 2.0854032039642334 seconds
+Decoding time: 10.162790775299072 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.5081395387649537 seconds
+Time per output token(TPOT): 0.5081395387649537 seconds
+-------------------------------
+Inputs 5
+Batch Size: 1
+Prefilling time: 2.0663745403289795 seconds
+Decoding time: 10.07400393486023 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.5037001967430115 seconds
+Time per output token(TPOT): 0.5037001967430115 seconds
+-------------------------------
+Inputs 6
+Batch Size: 1
+Prefilling time: 2.0779497623443604 seconds
+Decoding time: 10.079047441482544 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.5039523720741272 seconds
+Time per output token(TPOT): 0.5039523720741272 seconds
+-------------------------------
+Inputs 7
+Batch Size: 1
+Prefilling time: 2.0830254554748535 seconds
+Decoding time: 13.828632354736328 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.6914316177368164 seconds
+Time per output token(TPOT): 0.6914316177368164 seconds
+-------------------------------
+Inputs 8
+Batch Size: 1
+Prefilling time: 2.0980868339538574 seconds
+Decoding time: 11.718939542770386 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.5859469771385193 seconds
+Time per output token(TPOT): 0.5859469771385193 seconds
+-------------------------------
+Inputs 9
+Batch Size: 1
+Prefilling time: 2.078470468521118 seconds
+Decoding time: 10.102396011352539 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.505119800567627 seconds
+Time per output token(TPOT): 0.505119800567627 seconds
+-------------------------------
+Inputs 10
+Batch Size: 1
+Prefilling time: 2.0706493854522705 seconds
+Decoding time: 9.987958908081055 seconds
+Decoding iterations: 20
+Decoding time per iteration: 0.49939794540405275 seconds
+Time per output token(TPOT): 0.49939794540405275 seconds
+-------------------------------
